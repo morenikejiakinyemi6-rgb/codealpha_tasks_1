@@ -1,0 +1,121 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url = env("DATABASE_URL")
+}
+
+
+model User {
+    id         String @id @default(cuid())
+    name       String 
+    email      String @unique
+    password   String
+    phone      String? @unique
+    role       Role @default(CUSTOMER)
+    measurement Measurement?
+    createdAt  DateTime @default(now())
+    cartItems  CartItem[]
+    orders     Order[]
+}
+
+enum Role {
+    ADMIN
+    CUSTOMER
+}
+
+model Product {
+    id            String @id @default(cuid())
+    name            String
+    description     String?
+    imageUrl        String
+    size            String
+    color           String
+    price           Int
+    stockQuantity   Int @default(0)
+    cartItems       CartItem[]
+}
+
+model ProductCatalog {
+    id        String @id @default(cuid())
+    imageUrl  String
+    caption   String?
+    createdAt DateTime @default(now())
+}
+
+enum CartItemType { 
+    READYMADE
+    CUSTOM
+}
+
+model CartItem { 
+    id               String @id @default(cuid())
+    type             CartItemType
+    userId           String
+    user             User @relation(fields: [userId], references: [id])
+    productId        String?
+    product          Product?  @relation(fields: [productId], references: [id])
+    orderId          String?
+    order            Order?  @relation(fields: [orderId], references: [id])
+    createdAt        DateTime  @default(now())
+    quantity         Int   @default(1)
+    price            Int 
+    styleNotes       String?
+    measurementsSnapshot String?
+}
+
+
+enum OrderStatus { 
+    PENDING
+    IN_PROGRESS
+    READY
+    DELIVERED
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  userId         String
+  user           User        @relation(fields: [userId], references: [id])
+  items          CartItem[]
+  latitude       Float?
+  longitude      Float?
+  resolvedAddress String?
+  manualAddress   String?
+  deliveryNotes   String?
+  deliveryFee    Int         @default(0)
+  totalAmount    Int
+  status         OrderStatus @default(PENDING)
+  payments       Payment[]
+  createdAt      DateTime    @default(now())
+}
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model Payment {
+  id        String        @id @default(cuid())
+  orderId   String
+  order     Order         @relation(fields: [orderId], references: [id])
+  reference String        @unique
+  amount    Int
+  status    PaymentStatus @default(PENDING)
+  paidAt    DateTime?
+  createdAt DateTime      @default(now())
+}
+
+model Measurement {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id])
+  chest        Float?
+  waist        Float?
+  hip          Float?
+  shoulder     Float?
+  sleeveLength Float?
+  inseam       Float?
+  updatedAt    DateTime @updatedAt
+}
