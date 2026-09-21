@@ -11,14 +11,25 @@ export async function POST(request: Request) {
 
   const body = await request.json()
 
-  if (body.type === "CUSTOM") {
+    if (body.type === "CUSTOM") {
+    const existing = await prisma.cartItem.findFirst({
+      where: { userId: session.user.id, styleId: body.styleId, orderId: null },
+    })
+    if (existing) {
+      const updated = await prisma.cartItem.update({
+        where: { id: existing.id },
+        data: { quantity: existing.quantity + 1 },
+      })
+      return NextResponse.json(updated)
+    }
     const cartItem = await prisma.cartItem.create({
       data: {
         type: "CUSTOM",
         userId: session.user.id,
+        styleId: body.styleId,
         styleNotes: body.styleNotes,
         measurementsSnapshot: body.measurementsSnapshot,
-        price: 0, // Anu sets real custom pricing manually for now — no fixed price list for bespoke work
+        price: 0,
       },
     })
     return NextResponse.json(cartItem)

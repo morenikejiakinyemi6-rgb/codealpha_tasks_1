@@ -53,7 +53,7 @@ export default function RequestStyleForm({
     const res = await fetch("/api/cart", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type: "CUSTOM", styleNotes, measurementsSnapshot }),
+      body: JSON.stringify({ type: "CUSTOM", styleId, styleNotes, measurementsSnapshot }),
     })
 
     if (res.status === 401) {
@@ -67,6 +67,7 @@ export default function RequestStyleForm({
       return
     }
     setStatus("done")
+    window.location.href = "/cart"
   }
 
   return (
@@ -82,7 +83,7 @@ export default function RequestStyleForm({
           className="w-full rounded-lg border border-hairline bg-white px-4 py-3 mb-6 text-ink" rows={3} />
 
         <p className="text-sm font-medium text-ink mb-3">
-          Your measurements {measurement && <span className="text-ink/50 font-normal">(from your saved profile — edit if needed)</span>}
+          Your measurements {measurement && <span className="text-ink/50 font-normal">(Edit if needed)</span>}
         </p>
         <div className="grid grid-cols-2 gap-4 mb-2">
           {measurementFields.map((f) => (
@@ -101,7 +102,7 @@ export default function RequestStyleForm({
 
         {error && <p className="text-sm text-clay mb-4 mt-4">{error}</p>}
 
-        <button type="submit" disabled={status === "loading"}
+        <button type="submit" disabled={status === "loading" || status === "done"}
           className="w-full rounded-lg bg-indigo text-ivory py-3 font-medium hover:bg-indigo-dark transition-colors disabled:opacity-50 mt-2">
           {status === "done" ? "Request sent ✓" : status === "loading" ? "Sending..." : "Request this Style"}
         </button>

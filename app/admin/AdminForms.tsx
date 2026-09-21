@@ -24,11 +24,17 @@ export default function AdminForms() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, description, price, size, color, imageUrl, stockQuantity }),
     })
-    setStatus("done")
+    setName("")
+    setDescription("")
+    setPrice("")
+    setSize("")
+    setColor("")
+    setStockQuantity("")
+    setImageUrl("")
+    setStatus("idle")
     router.refresh()
   }
-
-  async function submitStyle(e: React.FormEvent) {
+    async function submitStyle(e: React.FormEvent) {
     e.preventDefault()
     setStatus("loading")
     await fetch("/api/admin/styles", {
@@ -36,7 +42,9 @@ export default function AdminForms() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ imageUrl, caption }),
     })
-    setStatus("done")
+    setCaption("")
+    setImageUrl("")
+    setStatus("idle")
     router.refresh()
   }
 

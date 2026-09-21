@@ -15,7 +15,7 @@ export default async function CartPage() {
 
   const cartItems = await prisma.cartItem.findMany({
     where: { userId: session.user.id, orderId: null },
-    include: { product: true },
+    include: { product: true, style: true },
   })
   const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
@@ -32,9 +32,10 @@ export default async function CartPage() {
             <div key={item.id} className="flex gap-4 border border-hairline rounded-lg p-4">
               <div className="relative w-20 h-20 bg-hairline/20 rounded flex-shrink-0">
                 {item.product && <Image src={item.product.imageUrl} alt={item.product.name} fill className="object-contain" />}
+                {item.style && <Image src={item.style.imageUrl} alt={item.style.caption ?? "Custom style"} fill className="object-contain" />}
               </div>
               <div className="flex-1">
-                <p className="font-medium text-ink">{item.type === "READYMADE" ? item.product?.name : "Custom Piece"}</p>
+                <p className="font-medium text-ink">{item.type === "READYMADE" ? item.product?.name : (item.style?.caption ?? "Custom Piece")}</p>
                 <CartItemControls id={item.id} quantity={item.quantity} editable={item.type === "READYMADE"} />
                 {item.type === "CUSTOM" && <p className="text-sm text-ink/60">{item.styleNotes}</p>}
                 <p className="text-indigo font-semibold mt-1">
@@ -45,7 +46,7 @@ export default async function CartPage() {
           ))}
         </div>
 
-                {cartItems.length > 0 && (
+        {cartItems.length > 0 && (
           <>
             <p className="mt-8 text-lg font-medium text-ink">Total: ₦{total.toLocaleString()}</p>
             <Link href="/checkout" className="inline-block mt-4 rounded-lg bg-indigo text-ivory px-6 py-3 font-medium hover:bg-indigo-dark transition-colors">
