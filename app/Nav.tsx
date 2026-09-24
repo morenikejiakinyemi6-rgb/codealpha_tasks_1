@@ -24,6 +24,7 @@ export default async function Nav() {
         <Link href="/shop" className="hover:text-indigo hover:underline underline-offset-4 transition-colors">Shop</Link>
         <Link href="/styles" className="hover:text-indigo hover:underline underline-offset-4 transition-colors">Custom Styles</Link>
         <Link href="/measurements" className="hover:text-indigo hover:underline underline-offset-4 transition-colors">My Measurements</Link>
+        <Link href="/orders" className="hover:text-indigo hover:underline underline-offset-4 transition-colors">My Orders</Link>
         <Link href="/cart" className="relative hover:text-indigo hover:underline underline-offset-4 transition-colors">
           Cart
           <span className="absolute -top-3 -right-4 bg-clay text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">

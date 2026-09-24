@@ -47,6 +47,7 @@ export default function MeasurementForm({ existing }: { existing: Measurement })
 
   return (
     <form onSubmit={handleSubmit}>
+      <div className="grid sm:grid-cols-2 gap-4">
       {fields.map((f) => (
         <div key={f.label} className="mb-5">
           <label className="block text-sm font-medium text-ink mb-1">{f.label} (inches)</label>
@@ -64,6 +65,7 @@ export default function MeasurementForm({ existing }: { existing: Measurement })
         className="w-full rounded-lg bg-indigo text-ivory py-3 font-medium hover:bg-indigo-dark transition-colors disabled:opacity-50">
         {status === "done" ? "Saved ✓" : status === "loading" ? "Saving..." : "Save Measurements"}
       </button>
+      </div>
     </form>
   )
 }

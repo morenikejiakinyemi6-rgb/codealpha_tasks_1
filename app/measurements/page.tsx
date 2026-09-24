@@ -18,7 +18,7 @@ export default async function MeasurementsPage() {
   return (
     <div className="min-h-screen bg-ivory flex flex-col">
       <Nav />
-      <section className="px-8 py-16 md:px-16 flex-1 max-w-md max-w-6xl mx-auto">
+        <section className="px-8 py-16 flex-1 max-w-2xl mx-auto w-full">
         <h1 className="font-display text-2xl text-ink mb-8">Your Measurements</h1>
         <MeasurementForm existing={measurement} />
       </section>

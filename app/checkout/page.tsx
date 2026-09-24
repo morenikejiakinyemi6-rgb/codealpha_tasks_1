@@ -24,7 +24,7 @@ export default async function CheckoutPage() {
   return (
     <div className="min-h-screen bg-ivory flex flex-col">
       <Nav />
-      <section className="px-8 py-16 flex-1 max-w-md max-w-6xl mx-auto">
+      <section className="px-8 py-16 flex-1 max-w-md max-w-6xl mx-auto ">
         <h1 className="font-display text-2xl text-ink mb-8">Checkout</h1>
         <CheckoutForm readymadeTotal={readymadeTotal} hasCustom={hasCustom} />
       </section>

@@ -27,6 +27,7 @@ export default function MobileMenu({
           <Link href="/shop" className={linkClass} onClick={() => setOpen(false)}>Shop</Link>
           <Link href="/styles" className={linkClass} onClick={() => setOpen(false)}>Custom Styles</Link>
           <Link href="/measurements" className={linkClass} onClick={() => setOpen(false)}>My Measurements</Link>
+          <Link href="/orders" className={linkClass} onClick={() => setOpen(false)}>My Orders</Link>
           <Link href="/cart" className={linkClass} onClick={() => setOpen(false)}>
             Cart {cartCount > 0 && `(${cartCount})`}
           </Link>
