@@ -2,58 +2,35 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/auth"
 import { NextResponse } from "next/server"
 
-export async function POST(request: Request) {
+export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   const session = await auth()
+  if (!session?.user?.id) return NextResponse.json({ error: "Not logged in" }, { status: 401 })
 
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Not logged in" }, { status: 401 })
+  const { id } = await context.params
+  const { quantity } = await request.json()
+
+  const item = await prisma.cartItem.findUnique({ where: { id } })
+  if (!item || item.userId !== session.user.id) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 })
   }
 
-  const body = await request.json()
-
-    if (body.type === "CUSTOM") {
-    const existing = await prisma.cartItem.findFirst({
-      where: { userId: session.user.id, styleId: body.styleId, orderId: null },
-    })
-    if (existing) {
-      const updated = await prisma.cartItem.update({
-        where: { id: existing.id },
-        data: { quantity: existing.quantity + 1 },
-      })
-      return NextResponse.json(updated)
-    }
-    const cartItem = await prisma.cartItem.create({
-      data: {
-        type: "CUSTOM",
-        userId: session.user.id,
-        styleId: body.styleId,
-        styleNotes: body.styleNotes,
-        measurementsSnapshot: body.measurementsSnapshot,
-        price: 0,
-      },
-    })
-    return NextResponse.json(cartItem)
-  }
-
-    const product = await prisma.product.findUnique({ where: { id: body.productId } })
-  if (!product) {
-    return NextResponse.json({ error: "Product not found" }, { status: 404 })
-  }
-
-  const existing = await prisma.cartItem.findFirst({
-    where: { userId: session.user.id, productId: product.id, orderId: null },
+  const updated = await prisma.cartItem.update({
+    where: { id },
+    data: { quantity: Math.max(1, quantity) },
   })
+  return NextResponse.json(updated)
+}
 
-  if (existing) {
-    const updated = await prisma.cartItem.update({
-      where: { id: existing.id },
-      data: { quantity: existing.quantity + 1 },
-    })
-    return NextResponse.json(updated)
+export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
+  const session = await auth()
+  if (!session?.user?.id) return NextResponse.json({ error: "Not logged in" }, { status: 401 })
+
+  const { id } = await context.params
+  const item = await prisma.cartItem.findUnique({ where: { id } })
+  if (!item || item.userId !== session.user.id) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 })
   }
 
-  const cartItem = await prisma.cartItem.create({
-    data: { type: "READYMADE", userId: session.user.id, productId: product.id, price: product.price },
-  })
-  return NextResponse.json(cartItem)
+  await prisma.cartItem.delete({ where: { id } })
+  return NextResponse.json({ success: true })
 }
